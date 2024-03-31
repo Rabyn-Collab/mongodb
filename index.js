@@ -2,10 +2,12 @@ const express = require('express');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const mongoose = require('mongoose');
-const { default: axios } = require('axios');
 const app = express();
 const port = 5000;
+const cors = require('cors');
 
+
+app.use(cors());
 
 mongoose.connect('mongodb+srv://teams700:moles900@cluster0.no9horl.mongodb.net/Shops').then((res) => {
   app.listen(5000, () => {
