@@ -78,16 +78,25 @@ module.exports.useRegister = async (req, res) => {
 }
 
 
-
+// const person = {
+//   name: 'ram'
+// };
+// person.name = 'shyam';
 
 module.exports.userUpdate = async (req, res) => {
-  const { fullname, shippingAddress } = req.body;
+  const { email, fullname, shippingAddress } = req.body;
   try {
     const existUser = await User.findOne({ _id: req.userId });
     if (existUser) {
-      return res.status(200).json(existUser);
+      existUser.email = email || existUser.email;
+      existUser.fullname = fullname || existUser.fullname;
+      existUser.shippingAddress = shippingAddress || existUser.shippingAddress;
+      await existUser.save();
+      return res.status(201).json({
+        status: 'success',
+        message: 'user update'
+      });
     } else {
-
       return res.status(404).json({
         status: 'error',
         message: 'user not found'

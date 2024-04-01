@@ -6,6 +6,15 @@ const app = express();
 const port = 5000;
 const cors = require('cors');
 
+// let r = 90;
+
+// const person = {
+//   name: 'per'
+// };
+// person.name = r || person.name;
+// console.log(person);
+
+
 
 app.use(cors());
 
