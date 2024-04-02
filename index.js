@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 5000;
 const cors = require('cors');
+const fileUpload = require('express-fileupload');
+
 
 // let r = 90;
 
@@ -19,7 +21,7 @@ const cors = require('cors');
 app.use(cors());
 
 mongoose.connect('mongodb+srv://teams700:moles900@cluster0.no9horl.mongodb.net/Shops').then((res) => {
-  app.listen(5000, () => {
+  app.listen(port, () => {
     console.log('app listening server err');
   })
 }).catch((err) => {
@@ -35,8 +37,13 @@ mongoose.connect('mongodb+srv://teams700:moles900@cluster0.no9horl.mongodb.net/S
 
 
 
-
+app.use('/uploads', express.static('uploads'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+  abortOnLimit: true
+}));
 
 
 app.get('/', (req, res) => {
@@ -48,8 +55,8 @@ app.get('/', (req, res) => {
 
 
 
-app.use(userRoutes);
-app.use(productRoutes);
+app.use('api/v1', userRoutes);
+app.use('/api/v1/products', productRoutes);
 
 app.use((req, res) => {
   return res.status(404).json({
