@@ -26,9 +26,9 @@ const registerSchema = Joi.object({
 
 
 
-router.route('/users/login').post(validator.body(loginSchema), userLogin);
-router.route('/users/register').post(validator.body(registerSchema), useRegister);
-router.route('/users/single').patch(authCheck, userUpdate);
+router.route('/login').post(validator.body(loginSchema), userLogin);
+router.route('/register').post(validator.body(registerSchema), useRegister);
+router.route('/single').patch(authCheck, userUpdate);
 
 
 
