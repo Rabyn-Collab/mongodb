@@ -38,8 +38,9 @@ module.exports.updateCheck = (req, res, next) => {
     const fileExt = path.extname(file.name);
 
     if (exts.includes(fileExt)) {
+      console.log(req.body.prevImage);
       fs.unlink(`.${req.body.prevImage}`, (err) => {
-
+        console.log(err);
       });
 
       file.mv(`./uploads/${file.name}`, (err) => {

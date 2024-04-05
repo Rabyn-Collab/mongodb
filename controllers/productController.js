@@ -1,5 +1,5 @@
 const Product = require('../models/Product');
-
+const mongoose = require('mongoose');
 const products = [
   { id: 1, name: 'shoes', price: 200 },
   { id: 2, name: 'clothes', price: 500 },
@@ -24,6 +24,37 @@ module.exports.getAllProducts = async (req, res) => {
 
 
 }
+
+module.exports.getProductById = async (req, res) => {
+  // console.log(req.params);
+  //   console.log(req.query);
+  const { id } = req.params;
+  try {
+    const isValid = mongoose.isValidObjectId(id);
+    if (isValid) {
+      const product = await Product.findById(id);
+      return res.status(200).json({
+        status: 'success',
+        data: product
+      });
+    } else {
+      return res.status(400).json({
+        status: 'error',
+        data: 'please provide valid id'
+      });
+    }
+
+
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+
+
+}
+
 
 
 
