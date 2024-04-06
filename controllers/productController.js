@@ -1,19 +1,58 @@
 const Product = require('../models/Product');
 const mongoose = require('mongoose');
-const products = [
-  { id: 1, name: 'shoes', price: 200 },
-  { id: 2, name: 'clothes', price: 500 },
-];
 
 
+exports.aliasTopProducts = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-rating';
+  next();
+}
 
-module.exports.getAllProducts = async (req, res) => {
+exports.getAllProducts = async (req, res) => {
+  const queryObj = { ...req.query };
+  const excludeFields = ['page', 'sort', 'limit', 'fields', 'search'];
+  excludeFields.forEach((e) => delete queryObj[e]);
+  let query = Product.find(queryObj);
+
+  //sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+    //query.sort('product_price rating');
+  } else {
+    query.sort('-createdAt')
+  }
+
+  // fields limiting
+  if (req.query.fields) {
+    const fieldsBy = req.query.fields.split(',').join(' ');
+    query = query.select(fieldsBy);
+    //query.select('product_price rating');
+  }
+
+  //searching
+
+  if (req.query.search) {
+    query = query.find({ product_name: { $regex: req.query.search, $options: 'i' } });
+  }
+
+
+  // pagination
+  //page=2&limit=10, 1-10, page 1 -- 11-20, page2
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
+
+  const counts = await Product.countDocuments(query);
+
   try {
-
-    const products = await Product.find({});
+    const products = await query;
     return res.status(200).json({
       status: 'success',
-      data: products
+      data: products,
+      page,
+      results: counts
     });
   } catch (err) {
     return res.status(400).json({
@@ -25,7 +64,7 @@ module.exports.getAllProducts = async (req, res) => {
 
 }
 
-module.exports.getProductById = async (req, res) => {
+exports.getProductById = async (req, res) => {
   // console.log(req.params);
   //   console.log(req.query);
   const { id } = req.params;
@@ -58,7 +97,7 @@ module.exports.getProductById = async (req, res) => {
 
 
 
-module.exports.addProduct = async (req, res) => {
+exports.addProduct = async (req, res) => {
   const {
     product_name,
     product_detail,
@@ -94,7 +133,7 @@ module.exports.addProduct = async (req, res) => {
 }
 
 
-module.exports.updateProduct = async (req, res) => {
+exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   const {
     product_name,
@@ -142,8 +181,7 @@ module.exports.updateProduct = async (req, res) => {
 }
 
 
-
-module.exports.removeProduct = async (req, res) => {
+exports.removeProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
