@@ -1,6 +1,12 @@
 const Product = require('../models/Product');
 const mongoose = require('mongoose');
 
+module.exports.getProductByAlias = async (req, res, next) => {
+  const { category } = req.params;
+  req.query.category = category.toLowerCase();
+  next();
+
+}
 
 
 module.exports.getTopProducts = async (req, res) => {
@@ -24,16 +30,43 @@ module.exports.getTopProducts = async (req, res) => {
 
 module.exports.getAllProducts = async (req, res) => {
 
+  const queryObj = { ...req.query };
+  const excludeFields = ['page', 'sort', 'limit', 'fields', 'search'];
+  excludeFields.forEach((val) => delete queryObj[val]);
+  //searching
+  if (req.query.search) {
+    queryObj.product_name = { $regex: req.query.search, $options: 'i' }
+  }
+
+  let query = Product.find(queryObj);
+
+  //sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+  }
+
+  //field limiting
+  if (req.query.fields) {
+    const fields = req.query.fields.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+
+
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
 
   try {
-    // const products = await Product.find({}).sort('-rating');
-    //const products = await Product.find({ rating: { $lt: 4 } });
-    // const products = await Product.find({}).select('product_name product_price');
-    const products = await Product.find({});
-    const count = await Product.countDocuments();
+
+    const products = await query;
+    const count = await Product.countDocuments(query);
     return res.status(200).json({
       status: 'success',
       data: products,
+      page,
       results: count,
     });
   } catch (err) {
