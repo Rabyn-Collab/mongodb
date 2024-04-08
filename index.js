@@ -16,6 +16,16 @@ const fileUpload = require('express-fileupload');
 // person.name = r || person.name;
 // console.log(person);
 
+// const person = {
+//   name: 'shyam',
+//   age: 90
+// };
+
+// const m = {...person, a: 90};
+
+// delete person['age'];
+
+
 
 
 app.use(cors());
