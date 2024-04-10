@@ -26,7 +26,8 @@ const fileUpload = require('express-fileupload');
 // delete person['age'];
 
 
-//somes
+//somes 
+
 
 app.use(cors());
 

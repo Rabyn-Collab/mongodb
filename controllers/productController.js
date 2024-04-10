@@ -88,10 +88,12 @@ module.exports.getProductById = async (req, res) => {
     const isValid = mongoose.isValidObjectId(id);
     if (isValid) {
       const product = await Product.findById(id);
+
       return res.status(200).json({
         status: 'success',
         data: product
       });
+
     } else {
       return res.status(400).json({
         status: 'error',
