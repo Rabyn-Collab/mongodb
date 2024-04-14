@@ -17,6 +17,7 @@ const userSchhema = mongoose.Schema({
     type: Boolean,
     default: false
   },
+
   shippingAddress: {
     address: { type: String, default: '' },
     city: { type: String, default: '' },
