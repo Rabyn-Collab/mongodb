@@ -36,3 +36,24 @@ module.exports.getOrderByUser = async (req, res, next) => {
 
 
 
+module.exports.createOrder = async (req, res, next) => {
+  const { totalAmount, orderItems } = req.body;
+  try {
+    await Order.create({
+      totalAmount,
+      orderItems,
+      user: req.userId
+    });
+    return res.status(200).json({
+      status: 'success',
+      message: 'order successfully added'
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+
+
