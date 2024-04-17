@@ -37,7 +37,7 @@ module.exports.getOrderByUser = async (req, res, next) => {
 module.exports.getOrderDetail = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const order = await Order.findOne({ _id: id });
+    const order = await Order.findById(id);
     return res.status(200).json({
       status: 'success',
       data: order
