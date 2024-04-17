@@ -34,6 +34,23 @@ module.exports.getOrderByUser = async (req, res, next) => {
   }
 }
 
+module.exports.getOrderDetail = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const order = await Order.findOne({ _id: id });
+    return res.status(200).json({
+      status: 'success',
+      data: order
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+
+
 
 
 module.exports.createOrder = async (req, res, next) => {
