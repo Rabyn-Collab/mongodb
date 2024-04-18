@@ -34,6 +34,23 @@ module.exports.getOrderByUser = async (req, res, next) => {
   }
 }
 
+
+module.exports.removeOrder = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    await Order.findByIdAndDelete(id);
+    return res.status(200).json({
+      status: 'success',
+      message: 'order removed'
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+  }
+}
+
 module.exports.getOrderDetail = async (req, res, next) => {
   const { id } = req.params;
   try {
