@@ -219,3 +219,79 @@ module.exports.removeProduct = async (req, res) => {
 
 }
 
+module.exports.addProduct = async (req, res) => {
+  const {
+    product_name,
+    product_detail,
+    product_price,
+    brand,
+    category,
+    countInStock,
+  } = req.body;
+
+  try {
+    await Product.create({
+      product_name,
+      product_detail,
+      product_price,
+      brand,
+      category,
+      countInStock,
+      product_image: req.imagePath
+    });
+
+    return res.status(201).json({
+      status: 'success',
+      message: `product added successfully`
+    });
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+
+  }
+
+}
+
+
+module.exports.addPReview = async (req, res) => {
+  const { id } = req.params;
+  const { comment, rating, username } = req.body;
+
+  try {
+
+    const isExist = await Product.findById(id);
+
+    if (isExist) {
+      const isReviewExist = isExist.reviews.find((rev) => rev.user === req.userId);
+      if (isReviewExist) return res.status(400).json({ message: 'you have already review it' });
+
+      isExist.reviews.push({ user: req.userId, comment, rating, username });
+      const total = isExist.reviews.reduce((prev, n) => prev + n.rating, 0);
+      isExist.rating = total / isExist.reviews.length;
+      isExist.numReviews = isExist.reviews.length;
+
+      await isExist.save();
+
+      return res.status(201).json({
+        status: 'success',
+        message: `successfully review added`
+      });
+    } else {
+      return res.status(404).json({
+        status: 'error',
+        message: `product not found`
+      });
+    }
+
+
+  } catch (err) {
+    return res.status(400).json({
+      status: 'error',
+      message: `${err}`
+    });
+
+  }
+
+}

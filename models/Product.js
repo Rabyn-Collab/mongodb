@@ -39,7 +39,18 @@ const productSchhema = new mongoose.Schema({
   countInStock: {
     type: Number,
     required: true
-  }
+  },
+  reviews: [{
+    username: { type: String, required: true },
+    comment: { type: Number, required: true },
+    rating: { type: Number, required: true },
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+  },
+  ]
 
 }, { timestamps: true });
 
