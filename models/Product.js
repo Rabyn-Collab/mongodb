@@ -42,7 +42,7 @@ const productSchhema = new mongoose.Schema({
   },
   reviews: [{
     username: { type: String, required: true },
-    comment: { type: Number, required: true },
+    comment: { type: String, required: true },
     rating: { type: Number, required: true },
     user: {
       type: mongoose.Types.ObjectId,
