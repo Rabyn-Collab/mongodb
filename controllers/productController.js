@@ -255,7 +255,7 @@ module.exports.addProduct = async (req, res) => {
 }
 
 
-module.exports.addPReview = async (req, res) => {
+module.exports.addReview = async (req, res) => {
   const { id } = req.params;
   const { comment, rating, username } = req.body;
 
