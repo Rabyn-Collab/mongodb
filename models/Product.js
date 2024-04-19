@@ -50,6 +50,7 @@ const productSchhema = new mongoose.Schema({
       required: true
     },
   },
+
   ]
 
 }, { timestamps: true });
