@@ -264,7 +264,7 @@ module.exports.addReview = async (req, res) => {
     const isExist = await Product.findById(id);
 
     if (isExist) {
-      const isReviewExist = isExist.reviews.find((rev) => rev.user === req.userId);
+      const isReviewExist = isExist.reviews.find((rev) => rev.user == req.userId);
       if (isReviewExist) return res.status(400).json({ message: 'you have already review it' });
 
       isExist.reviews.push({ user: req.userId, comment, rating, username });
